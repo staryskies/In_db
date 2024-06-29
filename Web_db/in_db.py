@@ -7,7 +7,7 @@ def hashMD5(value):
     return result.hexdigest()
 
 
-class workerDb():
+class workerDb:
     
     def __init__(self):
         self.connection  = sqlite3.connect("worker.db")
