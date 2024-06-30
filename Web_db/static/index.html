@@ -1,0 +1,67 @@
+<!-- static/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chat { width: 500px; height: 400px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; }
+        #message { width: 400px; }
+        #send { width: 75px; }
+    </style>
+</head>
+<body>
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Type your message here...">
+    <button id="send">Send</button>
+    <input type="text" id="user" placeholder="james buch">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const chat = document.getElementById('chat');
+
+            function fetchMessages() {
+                fetch('/chat')
+                    .then(response => response.json())
+                    .then(data => {
+                        chat.innerHTML = '';
+                        data.forEach(msg => {
+                            const messageElement = document.createElement('div');
+                            messageElement.textContent = msg;
+                            chat.appendChild(messageElement);
+                        });
+                        chat.scrollTop = chat.scrollHeight;
+                    });
+            }
+
+            document.getElementById('send').addEventListener('click', () => {
+                const message = document.getElementById('message').value;
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message }),
+                }).then(response => {
+                    if (response.ok) {
+                        fetchMessages();
+                    }
+                });
+                document.getElementById('message').value = '';
+                document.getElementById('user').value = '';
+            });
+
+            document.getElementById('message').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('send').click();
+                }
+            });
+
+            fetchMessages();
+            setInterval(fetchMessages, 1000);
+        });
+    </script>
+</body>
+</html>
