@@ -37,20 +37,20 @@
             }
 
             document.getElementById('send').addEventListener('click', () => {
+                const user = document.getElementById('user').value
                 const message = document.getElementById('message').value;
                 fetch('/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ message }),
+                    body: JSON.stringify({ user , message }),
                 }).then(response => {
                     if (response.ok) {
                         fetchMessages();
                     }
                 });
                 document.getElementById('message').value = '';
-                document.getElementById('user').value = '';
             });
 
             document.getElementById('message').addEventListener('keypress', function(e) {
