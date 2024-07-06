@@ -11,13 +11,16 @@ db = workerDb()
 
 class Chat(Resource):
     def get(self):
-        return jsonify(db.returnAll())
+        return db.returnAll()
 
     def post(self):
         new_message = request.json.get('message')
+        print("1")
         user = request.json.get('user')
+        print("2")
         db.insert(user, new_message)
-        return jsonify({'user': user, 'message': new_message}), 201
+        print("3")
+        return {'user': user, 'message': new_message}, 201
 
 api.add_resource(Chat, '/chat')
 
@@ -27,4 +30,4 @@ def index():
     return app.send_static_file('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5001)

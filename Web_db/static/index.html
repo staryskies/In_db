@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
+    <link ref="stylesheet" href="styles.css">
     <style>
         body { font-family: Arial, sans-serif; }
         #chat { width: 500px; height: 400px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; }
@@ -13,10 +14,25 @@
     </style>
 </head>
 <body>
-    <div id="chat"></div>
-    <input type="text" id="message" placeholder="Type your message here...">
-    <button id="send">Send</button>
-    <input type="text" id="user" placeholder="james buch">
+
+    <div class="container">
+        <div class="sidebar">
+            <h2>Sidebar</h2>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Services</li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+        
+        <div class="chat-area">
+            <div id="chat"></div>
+            <input type="text" id="message" placeholder="Type your message here...">
+            <button id="send">Send</button>
+            <input type="text" id="user" placeholder="james buch">
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
@@ -28,8 +44,9 @@
                     .then(data => {
                         chat.innerHTML = '';
                         data.forEach(msg => {
+                            const new_msg = msg[0] + ": " + msg[1]
                             const messageElement = document.createElement('div');
-                            messageElement.textContent = msg;
+                            messageElement.textContent = new_msg;
                             chat.appendChild(messageElement);
                         });
                         chat.scrollTop = chat.scrollHeight;
@@ -44,7 +61,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ user , message }),
+                    body: JSON.stringify({ user, message }),
                 }).then(response => {
                     if (response.ok) {
                         fetchMessages();
