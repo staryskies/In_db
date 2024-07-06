@@ -1,6 +1,6 @@
 # app.py
 from  db import workerDb
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from flask_restful import Resource, Api
 
 
@@ -15,12 +15,12 @@ class Chat(Resource):
 
     def post(self):
         new_message = request.json.get('message')
-        print("1")
         user = request.json.get('user')
-        print("2")
         db.insert(user, new_message)
-        print("3")
         return {'user': user, 'message': new_message}, 201
+    
+    def is_login(self):
+        return db.is_login()
 
 api.add_resource(Chat, '/chat')
 
@@ -28,6 +28,11 @@ api.add_resource(Chat, '/chat')
 def index():
     print("index")
     return app.send_static_file('index.html')
+
+@app.route('/login.html')
+def login():
+    print("login")
+    return app.send_static_file('login.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
