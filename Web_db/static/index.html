@@ -5,30 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
-    <link ref="stylesheet" href="styles.css">
-    <style>
-        body { font-family: Arial, sans-serif; }
-        #chat { width: 1000px; height: 800px; border: 2px solid #ccc; padding: 20px; overflow-y: scroll; }
-        #message { width: 640px; }
-        #send { width: 150px; }
-        #user { width: 230px; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+
 </head>
 <body>
+    <div class="container">
+        <div class="sidebar">
+            <a href="/login.html">Log In</a>
 
-    <div class="sidenav">
-        <div id="Signin"></div>
-        <a href="/login.html">Log In</a>
-
+        </div>
+        
+        <div class="content">
+            <div id="chat"></div>
+            <input type="text" id="message" placeholder="Type Message Here">
+            <button id="send">Send</button>
+            <input type="text" id="user" placeholder="james buch">
+        </div>
     </div>
-    
-    <div class="chat-area">
-        <div id="chat"></div>
-        <input type="text" id="message" placeholder="Type Message Here">
-        <button id="send">Send</button>
-        <input type="text" id="user" placeholder="james buch">
-    </div>
-
     <script>
 
 
