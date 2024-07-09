@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <p>Welcome, <span id="username">User</span>!</p>
+            <button id="logout-btn">Log Out</button>
+            <h3>Chats</h3>
+            <button id="global-chat">Global Chat</button>
+            <h4>Direct Messages</h4>
+            <ul id="dm-list">
+            </ul>
+        </div>
+        
+        <div class="content">
+            <h2 id="chat-header">Global Chat</h2>
+            <div id="chat"></div>
+            <input type="text" id="message" placeholder="Type Message Here">
+            <button id="send">Send</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const chat = document.getElementById('chat');
+            const dmList = document.getElementById('dm-list');
+            const globalChatBtn = document.getElementById('global-chat');
+            const username = document.getElementById('username').textContent;
+            let currentRecipient = 'global';
+
+            function fetchMessages(recipient = 'global') {
+                const url = `/chat?recipient=${recipient}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        chat.innerHTML = '';
+                        data.forEach(msg => {
+                            const messageElement = document.createElement('div');
+                            messageElement.textContent = `${msg[0]}: ${msg[2]}`;
+                            messageElement.style.overflowWrap = 'break-word';
+                            chat.appendChild(messageElement);
+                        });
+                        chat.scrollTop = chat.scrollHeight;
+                    });
+            }
+
+            function updateChatHeader() {
+                const header = document.getElementById('chat-header');
+                header.textContent = currentRecipient !== 'global' ? `Chat with ${currentRecipient}` : 'Global Chat';
+            }
+
+            function switchChat(recipient) {
+                currentRecipient = recipient;
+                updateChatHeader();
+                fetchMessages(currentRecipient);
+            }
+
+            globalChatBtn.addEventListener('click', () => {
+                switchChat('global');
+            });
+
+            // Function to add DM list items
+            function addDmListItem(username) {
+                const li = document.createElement('li');
+                li.textContent = username;
+                li.dataset.username = username;
+                li.addEventListener('click', () => {
+                    switchChat(username);
+                });
+                dmList.appendChild(li);
+
+            }
+
+            addDmListItem('Alice');
+            addDmListItem('Bob');
+            addDmListItem('Charlie');
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                fetch('/logout', {
+                    method: 'POST',
+                    credentials: 'same-origin'
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = '/';  // Redirect to the root URL (login page)
+                    }
+                });
+            });
+
+
+            document.getElementById('send').addEventListener('click', () => {
+                const message = document.getElementById('message').value;
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ recipient: currentRecipient, message: message }),
+                }).then(response => {
+                    if (response.ok) {
+                        fetchMessages(currentRecipient);
+                    }
+                });
+                document.getElementById('message').value = '';
+            });
+
+            document.getElementById('message').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('send').click();
+                }
+            });
+
+            // Initial load of global chat
+            fetchMessages();
+            updateChatHeader();
+
+            // Periodically refresh messages
+            setInterval(() => fetchMessages(currentRecipient), 5000);
+        });
+    </script>
+</body>
+</html>
